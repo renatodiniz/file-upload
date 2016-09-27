@@ -15,6 +15,7 @@ public class Arquivo {
 	 */
 
 	private Long id;
+	private Usuario usuario;
 	private Calendar inicioEnvio;
 	private Calendar terminoEnvio;
 	private String nomeArquivo;
@@ -24,11 +25,12 @@ public class Arquivo {
 	public Arquivo() {
 		id = (long) 0;
 	}
-
-	public Arquivo(Long id, Calendar inicioEnvio, Calendar terminoEnvio, String nomeArquivo,
+	
+	public Arquivo(Long id, Usuario usuario, Calendar inicioEnvio, Calendar terminoEnvio, String nomeArquivo,
 			UploadStatus uploadStatus, Long quantidadeChunks) {
 		super();
 		this.id = id;
+		this.usuario = usuario;
 		this.inicioEnvio = inicioEnvio;
 		this.terminoEnvio = terminoEnvio;
 		this.nomeArquivo = nomeArquivo;
@@ -65,6 +67,14 @@ public class Arquivo {
 		} else if (!nomeArquivo.equals(other.nomeArquivo))
 			return false;
 		return true;
+	}
+	
+	public Usuario getUsuario() {
+		return usuario;
+	}
+
+	public void setUsuario(Usuario usuario) {
+		this.usuario = usuario;
 	}
 
 	public Long getId() {

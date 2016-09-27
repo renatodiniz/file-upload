@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
-    <title>Demo</title>
+    <title>File Upload</title>
     <meta name="description" content=""/>
     <meta name="viewport" content="width=device-width"/>
     <base href="/"/>
@@ -21,16 +21,24 @@
 	    </div>
 	    <ul class="nav navbar-nav">
 	      <li class="active"><a href="#">Listar Arquivos</a></li>
-	      <li><a href="/login">Enviar Arquivo</a></li> 
+	      <li ng-show="home.authenticated"><a href="#">Enviar Arquivo</a></li> 
 	    </ul>
 	    <ul class="nav navbar-nav navbar-right">
 	      <li ng-show="home.authenticated"><a href="#"><span class="glyphicon glyphicon-user"></span> <span ng-bind="home.user"></a></li>
+	      <li ng-show="!home.authenticated"><a href="/login"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
 	      <li ng-show="home.authenticated"><a href="#" ng-click="home.logout()"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
 	    </ul>
 	  </div>
 	</nav>	
 
-	<!--  <h1>Login</h1>
+	<h1>Login</h1>
+	
+	<div class="container" ng-show="home.authenticated">	
+  		<div>Facebook Nome: <span ng-bind="home.user"></span></div>
+	  	<div>Facebook Id: <span ng-bind="home.id"></span></div>
+	</div>
+	
+	<!--  
 	<div class="container" ng-show="!home.authenticated">
 		<div>
 			With Facebook: <a href="/login">click here</a>
@@ -51,6 +59,7 @@
 	  		var self = this;
 	  		$http.get("/user").success(function(data) {
 		   		self.user = data.userAuthentication.details.name;
+		   		self.id = data.userAuthentication.details.id;
 		    	self.authenticated = true;
 		  	}).error(function() {
 		    	self.user = "N/A";

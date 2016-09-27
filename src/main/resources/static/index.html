@@ -10,29 +10,62 @@
     <link rel="stylesheet" type="text/css" href="/webjars/bootstrap/3.2.0/css/bootstrap.min.css"/>
     <script type="text/javascript" src="/webjars/jquery/2.1.1/jquery.min.js"></script>
     <script type="text/javascript" src="/webjars/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="/webjars/angularjs/1.4.3/angular.min.js"></script>
 </head>
 <body ng-app="app" ng-controller="home as home">
-	<h1>Demo</h1>
-	
+
+	<nav class="navbar navbar-inverse">
+	  <div class="container-fluid">
+	    <div class="navbar-header">
+	      <a class="navbar-brand" href="#">File Upload</a>
+	    </div>
+	    <ul class="nav navbar-nav">
+	      <li class="active"><a href="#">Listar Arquivos</a></li>
+	      <li><a href="/login">Enviar Arquivo</a></li> 
+	    </ul>
+	    <ul class="nav navbar-nav navbar-right">
+	      <li ng-show="home.authenticated"><a href="#"><span class="glyphicon glyphicon-user"></span> <span ng-bind="home.user"></a></li>
+	      <li ng-show="home.authenticated"><a href="#" ng-click="home.logout()"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
+	    </ul>
+	  </div>
+	</nav>	
+
+	<!--  <h1>Login</h1>
 	<div class="container" ng-show="!home.authenticated">
-		Login with: <a href="/login">Facebook</a>
+		<div>
+			With Facebook: <a href="/login">click here</a>
+		</div>
 	</div>
-	
-	<div class="container" ng-show="home.authenticated">
-		Logged in as: <span ng-bind="home.user"></span>
+		
+	<div class="container" ng-show="home.authenticated">	
+  		Logged in as: <span ng-bind="home.user"></span>
+	  	<div>
+	    	<button ng-click="home.logout()" class="btn btn-primary">Logout</button>
+	  	</div>
 	</div>
-	
-	<script type="text/javascript" src="/webjars/angularjs/1.4.3/angular.min.js"></script>
+	-->
 	<script type="text/javascript">
-		angular.module("app", []).controller("home", function($http) {
-		  var self = this;
-		  $http.get("/user").success(function(data) {
-		    self.user = data.userAuthentication.details.name;
-		    self.authenticated = true;
-		  }).error(function() {
-		    self.user = "N/A";
-		    self.authenticated = false;
-		  });
+		var app = angular.module("app", []);
+	
+		app.controller("home", function($http, $location) {
+	  		var self = this;
+	  		$http.get("/user").success(function(data) {
+		   		self.user = data.userAuthentication.details.name;
+		    	self.authenticated = true;
+		  	}).error(function() {
+		    	self.user = "N/A";
+		    	self.authenticated = false;
+		  	});
+	  		
+	  		self.logout = function() {
+	  			$http.post('/logout', {}).success(function() {
+	   	 			self.authenticated = false;
+	    			$location.path("/");
+	  			}).error(function(data) {
+	    			console.log("Logout failed")
+	    			self.authenticated = false;
+	  			});
+			};
 		});
 	</script>
 </body>

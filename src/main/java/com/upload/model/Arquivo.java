@@ -2,7 +2,7 @@ package com.upload.model;
 
 import java.util.Calendar;
 
-public class UploadArquivo {
+public class Arquivo {
 	
 	/*
 	 * Campos retornados: 
@@ -18,15 +18,15 @@ public class UploadArquivo {
 	private Calendar inicioEnvio;
 	private Calendar terminoEnvio;
 	private String nomeArquivo;
-	private UploadStatusEnum uploadStatus; 
+	private UploadStatus uploadStatus; 
 	private Long quantidadeChunks;	
 	
-	public UploadArquivo() {
+	public Arquivo() {
 		id = (long) 0;
 	}
 
-	public UploadArquivo(Long id, Calendar inicioEnvio, Calendar terminoEnvio, String nomeArquivo,
-			UploadStatusEnum uploadStatus, Long quantidadeChunks) {
+	public Arquivo(Long id, Calendar inicioEnvio, Calendar terminoEnvio, String nomeArquivo,
+			UploadStatus uploadStatus, Long quantidadeChunks) {
 		super();
 		this.id = id;
 		this.inicioEnvio = inicioEnvio;
@@ -53,7 +53,7 @@ public class UploadArquivo {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		UploadArquivo other = (UploadArquivo) obj;
+		Arquivo other = (Arquivo) obj;
 		if (id == null) {
 			if (other.id != null)
 				return false;
@@ -99,11 +99,11 @@ public class UploadArquivo {
 		this.nomeArquivo = nomeArquivo;
 	}
 
-	public UploadStatusEnum getUploadStatus() {
+	public UploadStatus getUploadStatus() {
 		return uploadStatus;
 	}
 
-	public void setUploadStatus(UploadStatusEnum uploadStatus) {
+	public void setUploadStatus(UploadStatus uploadStatus) {
 		this.uploadStatus = uploadStatus;
 	}
 

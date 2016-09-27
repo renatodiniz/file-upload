@@ -1,4 +1,4 @@
-##Aplicação de upload de arquivos.
+##Aplicação para upload de arquivos.
 
 Você deve criar uma aplicação web que realize upload de arquivos e liste todos os arquivos enviados utilizando a linguagem de programação Java. O site deve consumir APIs REST para realizar todo o trabalho.
 

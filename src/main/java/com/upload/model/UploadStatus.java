@@ -5,13 +5,13 @@ public enum UploadStatus {
     FALHA   	 ("Falha"),
     CONCLUIDO    ("Concluído");
 	
-	private final String descricao;
+	private final String description;
 	
-	UploadStatus(String descricao) {
-        this.descricao = descricao;
+	UploadStatus(String description) {
+        this.description = description;
     }
 
-	public String getDescricao() {
-		return descricao;
+	public String getDescription() {
+		return description;
 	}	
 }

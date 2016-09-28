@@ -3,13 +3,15 @@
 <head>
     <meta charset="utf-8"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
-    <title>File Upload</title>
+    <title>File Upload App</title>
     <meta name="description" content=""/>
     <meta name="viewport" content="width=device-width"/>
     <base href="/"/>
     <link rel="stylesheet" type="text/css" href="/webjars/bootstrap/3.2.0/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="css/jquery.fileupload.css">
     <script type="text/javascript" src="/webjars/jquery/2.1.1/jquery.min.js"></script>
-    <script type="text/javascript" src="/webjars/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+    <script src="js/jquery.ui.widget.js"></script>
+    <script src="js/jquery.fileupload.js"></script>    
     <script type="text/javascript" src="/webjars/angularjs/1.4.3/angular.min.js"></script>
 </head>
 <body ng-app="app" ng-controller="home as home">
@@ -17,12 +19,12 @@
 	<nav class="navbar navbar-inverse">
 	  <div class="container-fluid">
 	    <div class="navbar-header">
-	      <a class="navbar-brand" href="#">File Upload</a>
+	      <a class="navbar-brand" href="#">File Upload App</a>
 	    </div>
-	    <ul class="nav navbar-nav">
+	    <!--  <ul class="nav navbar-nav">
 	      <li class="active"><a href="#">Listar Arquivos</a></li>
 	      <li ng-show="home.authenticated"><a href="#">Enviar Arquivo</a></li> 
-	    </ul>
+	    </ul>-->
 	    <ul class="nav navbar-nav navbar-right">
 	      <li ng-show="home.authenticated"><a href="#"><span class="glyphicon glyphicon-user"></span> <span ng-bind="home.user"></a></li>
 	      <li ng-show="!home.authenticated"><a href="/login"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
@@ -31,27 +33,53 @@
 	  </div>
 	</nav>	
 
-	<h1>Login</h1>
+	<h2 ng-show="home.authenticated">Enviar Arquivo</h2>
 	
-	<div class="container" ng-show="home.authenticated">	
-  		<div>Facebook Nome: <span ng-bind="home.user"></span></div>
-	  	<div>Facebook Id: <span ng-bind="home.id"></span></div>
-	</div>
+	<div class="container" ng-show="home.authenticated">
+       <!-- The fileinput-button span is used to style the file input field as button -->
+       <span class="btn btn-success fileinput-button">
+          <i class="glyphicon glyphicon-plus"></i> <span>Selecione o arquivo...</span>
+          <!-- The file input field used as target for the file upload widget -->
+          <input id="fileupload" type="file" name="file" data-url="/arquivo">
+       </span>
+       <br>
+       <br>
+       <!-- The global progress bar -->
+       <div id="progress" class="progress">
+          <div class="progress-bar progress-bar-success"></div>
+       </div>
+       <!-- The container for the uploaded files -->
+       <div id="files" class="files"></div>
+       <br>
+    </div>
 	
-	<!--  
-	<div class="container" ng-show="!home.authenticated">
-		<div>
-			With Facebook: <a href="/login">click here</a>
-		</div>
-	</div>
+	<script ng-controller="home">
+		$(function() {
+	        $('#fileupload').fileupload({
+	            dataType: 'json',
+	            maxChunkSize: 1000000,
+	            maxNumberOfFiles: 1,
+	            done: function(e, data) {
+	                var d = new Date();
+	                $('<p/>').text(
+	                    'Upload realizado com sucesso. ' + d.toLocaleDateString() + ' - ' + d.toLocaleTimeString()).appendTo(
+	                    '#files');
+	            },
+	            progressall: function(e, data) {
+	                var progress = parseInt(data.loaded / data.total * 100, 10);
+	                $('#progress .progress-bar').css('width',
+	                    progress + '%');
+	            }
+	        }).bind('fileuploadsubmit', function(e, data) {
+	            data.formData = {
+	                userId: 123,
+	                name: 'Renato Diniz',
+	                fileId: Math.floor((Math.random() * 1000000000000) + 1)
+	            };
+	        });
+	    });
+	</script>
 		
-	<div class="container" ng-show="home.authenticated">	
-  		Logged in as: <span ng-bind="home.user"></span>
-	  	<div>
-	    	<button ng-click="home.logout()" class="btn btn-primary">Logout</button>
-	  	</div>
-	</div>
-	-->
 	<script type="text/javascript">
 		var app = angular.module("app", []);
 	
@@ -75,7 +103,7 @@
 	    			self.authenticated = false;
 	  			});
 			};
-		});
+		});		
 	</script>
 </body>
 </html>

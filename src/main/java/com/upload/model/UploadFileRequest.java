@@ -10,9 +10,8 @@ public class UploadFileRequest {
 	private Long fileFullLength;
     private Long chunkFrom;
     private Long chunkTo;
-    private String fileName;
     
-	public UploadFileRequest(Long fileId, String contentRange, String contentDisposition) throws StorageException {
+	public UploadFileRequest(Long fileId, String contentRange) throws StorageException {
 		this.fileFullLength = -1L;
 		this.chunkFrom = -1L;
 		this.chunkTo = -1L;
@@ -27,8 +26,12 @@ public class UploadFileRequest {
 	        chunkFrom = Long.parseLong(fromAndTo[0]);
 	        chunkTo = Long.parseLong(fromAndTo[1]);
 	    }
-	    
-	    this.fileId = fileId;
+	    	    
+	    if (fileId != null) {
+	    	this.fileId = fileId;
+	    } else {
+	    	throw new StorageException("Unexpected fileId state: fileId cannot be null");
+	    }
 	}
 	
 	public Boolean isChunk () {
@@ -36,6 +39,14 @@ public class UploadFileRequest {
 			return false;
 		}
 		return true;
+	}
+	
+	public Long getFileId() {
+		return fileId;
+	}
+
+	public void setFileId(Long fileId) {
+		this.fileId = fileId;
 	}
 
 	public long getFileFullLength() {
@@ -61,12 +72,4 @@ public class UploadFileRequest {
 	public void setChunkTo(long chunkTo) {
 		this.chunkTo = chunkTo;
 	}
-
-	public String getFileName() {
-		return fileName;
-	}
-
-	public void setFileName(String fileName) {
-		this.fileName = fileName;
-	}	
 }

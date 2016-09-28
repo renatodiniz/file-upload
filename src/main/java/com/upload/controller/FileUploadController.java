@@ -6,7 +6,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,10 +37,9 @@ public class FileUploadController {
 			@RequestParam("userId") Long userId,
 			@RequestParam("name") String name,
 			@RequestParam("fileId") Long fileId,
-			@RequestHeader("Content-Range") String contentRange,
-			@RequestHeader("Content-Disposition") String contentDisposition) {
+			@RequestHeader("Content-Range") String contentRange) {
 		
-		UploadFileRequest uploadFileRequest = new UploadFileRequest(fileId, contentRange, contentDisposition);
+		UploadFileRequest uploadFileRequest = new UploadFileRequest(fileId, contentRange);
 		storageService.store(file, uploadFileRequest);
 		
 		

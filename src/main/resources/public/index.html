@@ -1,5 +1,4 @@
-<!doctype html>
-<html lang="en">
+<html>
 <head>
     <meta charset="utf-8"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
@@ -14,17 +13,13 @@
     <script src="js/jquery.fileupload.js"></script>    
     <script type="text/javascript" src="/webjars/angularjs/1.4.3/angular.min.js"></script>
 </head>
-<body ng-app="app" ng-controller="home as home">
+<body id="home" ng-app="app" ng-controller="home as home">
 
 	<nav class="navbar navbar-inverse">
 	  <div class="container-fluid">
 	    <div class="navbar-header">
 	      <a class="navbar-brand" href="#">File Upload App</a>
 	    </div>
-	    <!--  <ul class="nav navbar-nav">
-	      <li class="active"><a href="#">Listar Arquivos</a></li>
-	      <li ng-show="home.authenticated"><a href="#">Enviar Arquivo</a></li> 
-	    </ul>-->
 	    <ul class="nav navbar-nav navbar-right">
 	      <li ng-show="home.authenticated"><a href="#"><span class="glyphicon glyphicon-user"></span> <span ng-bind="home.user"></a></li>
 	      <li ng-show="!home.authenticated"><a href="/login"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
@@ -53,27 +48,27 @@
        <br>
     </div>
 	
-	<script ng-controller="home">
+	<script>
 		$(function() {
 	        $('#fileupload').fileupload({
 	            dataType: 'json',
 	            maxChunkSize: 1000000,
 	            maxNumberOfFiles: 1,
 	            done: function(e, data) {
-	                var d = new Date();
-	                $('<p/>').text(
-	                    'Upload realizado com sucesso. ' + d.toLocaleDateString() + ' - ' + d.toLocaleTimeString()).appendTo(
-	                    '#files');
+	            	alert(data.result.message);
+	            	if (data.result.message) {
+	                	$('<p/>').text(data.result.message).appendTo('#files');
+	            	}
 	            },
 	            progressall: function(e, data) {
 	                var progress = parseInt(data.loaded / data.total * 100, 10);
 	                $('#progress .progress-bar').css('width',
 	                    progress + '%');
 	            }
-	        }).bind('fileuploadsubmit', function(e, data) {
+	        }).bind('fileuploadsubmit', function(e, data) {	        	
 	            data.formData = {
-	                userId: 123,
-	                name: 'Renato Diniz',
+	                userId: $('#home').scope().home.id,
+	                name: $('#home').scope().home.user,
 	                fileId: Math.floor((Math.random() * 1000000000000) + 1)
 	            };
 	        });
@@ -86,8 +81,8 @@
 		app.controller("home", function($http, $location) {
 	  		var self = this;
 	  		$http.get("/user").success(function(data) {
-		   		self.user = data.userAuthentication.details.name;
-		   		self.id = data.userAuthentication.details.id;
+		   		self.user = data.name;
+		   		self.id = data.id;
 		    	self.authenticated = true;
 		  	}).error(function() {
 		    	self.user = "N/A";

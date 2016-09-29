@@ -1,126 +1,138 @@
 package com.upload.controller;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.upload.model.UploadFileRequest;
+import com.upload.model.File;
+import com.upload.model.UploadStatus;
+import com.upload.model.User;
+import com.upload.model.dto.UploadFileRequestDTO;
+import com.upload.service.FileService;
 import com.upload.service.StorageService;
+import com.upload.service.UserService;
+import com.upload.service.exception.StorageException;
 
+/**
+ * The Class FileUploadController.
+ */
 @Controller
 public class FileUploadController {
 	
+	/** Serviço de armazenamento de arquivos. */
 	private final StorageService storageService;
 	
+	/** Serviço de persistência de arquivo. */
+	private final FileService fileService;
+	
+	/** Serviço de persistência de usuário. */
+	private final UserService userService;
+	
+	/** Log4j logger. */
+	private static final Logger logger = Logger.getLogger(FileUploadController.class);
+	
+	/**
+	 * Instantiates a new file upload controller.
+	 *
+	 * @param storageService
+	 *            the storage service
+	 */
 	@Autowired
-    public FileUploadController(StorageService storageService) {
+    public FileUploadController(StorageService storageService, FileService fileService, UserService userService) {
         this.storageService = storageService;
+        this.fileService = fileService;
+        this.userService = userService;
     }
 
+	/**
+	 * Método responsável por realizar o upload de um arquivo.
+	 * Capaz de suportar upload de arquivos grandes enviados em blocos.
+	 * Faz uso do Content-Range header que é transmitido pelo plugin jQuery-File-Upload 
+	 * para cada bloco de arquivo.
+	 *
+	 * @param multipartFile
+	 *            arquivo multipart
+	 * @param userId
+	 *            id do usuário
+	 * @param name
+	 *            nome do usuário
+	 * @param fileId
+	 *            id único do arquivo
+	 * @param contentRange
+	 *            Content-Range header
+	 * @return the response entity
+	 * 			  Entidade de resposta com informações relevantes sobre o upload.
+	 */
 	@PostMapping("/arquivo")
-	public ResponseEntity<Map<String, Object>> handleFileUpload(@RequestParam("file") MultipartFile file, 
+	public ResponseEntity<Map<String, Object>> handleFileUpload(@RequestParam("file") MultipartFile multipartFile, 
 			@RequestParam("userId") Long userId,
 			@RequestParam("name") String name,
 			@RequestParam("fileId") Long fileId,
-			@RequestHeader("Content-Range") String contentRange) {
+			@RequestHeader(required = false, value = "Content-Range") String contentRange) {
 		
-		UploadFileRequest uploadFileRequest = new UploadFileRequest(fileId, contentRange);
-		storageService.store(file, uploadFileRequest);
-		
-		
-		
-		
+		User user = userService.findById(userId);
+		File file = fileService.findById(fileId);
 		Map<String, Object> ret = new LinkedHashMap<String, Object>();
-//		List<Map<String, Object>> files = new ArrayList<Map<String,Object>>();
-//		Map<String, Object> fileInfo = new LinkedHashMap<String, Object>();
-//		
-//		fileInfo.put("name", file.getName());
-//        fileInfo.put("type", file.getContentType());
-//        fileInfo.put("size", file.getSize());
-//        files.add(fileInfo);
-//        
-//        ret.put("files", files);
-        
-        return ResponseEntity
-                .ok()
-                .body(ret);
+				
+		if (user == null)
+			user = new User(userId, name);				
+		
+		if (file == null)
+			file = new File(fileId, user, Calendar.getInstance(), null, multipartFile.getOriginalFilename(), UploadStatus.EM_ANDAMENTO);
+		
+		try {			
+			// cria objeto com dados do request e realiza armazenamento do arquivo
+			UploadFileRequestDTO uploadFileRequest = new UploadFileRequestDTO(fileId, contentRange);
+			storageService.store(multipartFile, uploadFileRequest);
+			file.incrementNumberOfChunks();
+			
+			// testa se o upload do arquivo foi finalizado
+			if (uploadFileRequest.isFileAssembled()) {
+				// criando messagem de retorno da requisição
+				String message = "Upload do arquivo %s realizado com sucesso: %s";
+				String dataHoraAtual = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss").format(new Date());
+				ret.put("message", String.format(message, multipartFile.getOriginalFilename(), dataHoraAtual));
+				
+				
+				file.setUploadStatus(UploadStatus.CONCLUIDO);
+				file.setEndTime(Calendar.getInstance());
+			}
+			
+			// cria/atualiza usuário e arquivo
+			userService.saveUser(user);
+			fileService.saveOrUpdateFile(file);
+			
+		} catch (StorageException e) {
+			// caso ocorra algum erro no processo, seta o status do arquivo como falha
+			file.setUploadStatus(UploadStatus.FALHA);
+			fileService.saveOrUpdateFile(file);
+
+			logger.error("Erro durante o armazenamento do arquivo.", e);
+			ret.put("message", e.getMessage());
+			
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ret);			
+		}
+		return ResponseEntity.ok().body(ret);
 	}
 	
-	private static void saveChunk(File dir, String fileName, 
-	        long from, byte[] bytes, long fileFullLength) throws IOException {
-	    File target = new File(dir, fileName + "." + from + ".chunk");
-	    OutputStream os = new FileOutputStream(target);
-	    try {
-	        os.write(bytes);
-	    } finally {
-	        os.close();
-	    }
-	}
-
-	private static TreeMap<Long, Long> getChunkStartsToLengths(File dir, 
-	        String fileName) throws IOException {
-	    TreeMap<Long, Long> chunkStartsToLengths = new TreeMap<Long, Long>();
-	    for (File f : dir.listFiles()) {
-	        String chunkFileName = f.getName();
-	        if (chunkFileName.startsWith(fileName + ".") && 
-	                chunkFileName.endsWith(".chunk")) {
-	            chunkStartsToLengths.put(Long.parseLong(chunkFileName.substring(
-	                    fileName.length() + 1, chunkFileName.length() - 6)), f.length());
-	        }
-	    }
-	    return chunkStartsToLengths;
-	}
-
-	private static long getCommonLength(TreeMap<Long, Long> chunkStartsToLengths) {
-	    long ret = 0;
-	    for (long len : chunkStartsToLengths.values())
-	        ret += len;
-	    return ret;
-	}
-
-	private static File assembleAndDeleteChunks(File dir, String fileName, 
-	        List<Long> chunkStarts) throws IOException {
-	    File assembledFile = new File(dir, fileName);
-	    if (assembledFile.exists()) // In case chunks come in concurrent way
-	        return assembledFile;
-	    OutputStream assembledOs = new FileOutputStream(assembledFile);
-	    byte[] buf = new byte[100000];
-	    try {
-	        for (long chunkFrom : chunkStarts) {
-	            File chunkFile = new File(dir, fileName + "." + chunkFrom + ".chunk");
-	            InputStream is = new FileInputStream(chunkFile);
-	            try {
-	                while (true) {
-	                    int r = is.read(buf);
-	                    if (r == -1)
-	                        break;
-	                    if (r > 0)
-	                        assembledOs.write(buf, 0, r);
-	                }
-	            } finally {
-	                is.close();
-	            }
-	            chunkFile.delete();
-	        }
-	    } finally {
-	        assembledOs.close();
-	    }
-	    return assembledFile;
-	}
+	@GetMapping("/arquivo/arquivos")
+    public List<File> listUploadedFiles() {
+        return fileService.findAllFiles();
+    }
 
 }

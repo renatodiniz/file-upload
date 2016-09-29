@@ -13,20 +13,37 @@ import org.springframework.util.FileCopyUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.upload.common.FileChunkUtils;
-import com.upload.model.UploadFileRequest;
+import com.upload.model.dto.UploadFileRequestDTO;
+import com.upload.service.exception.StorageException;
+import com.upload.service.properties.StorageProperties;
 
+/**
+ * The Class FileSystemStorageService.
+ */
 @Service
-public class FileSystemStorageService implements StorageService {
+public class StorageServiceFileSystem implements StorageService {
 
+    /** The root location. */
     private final Path rootLocation;
+    
+    /** The directory. */
     private File directory;
 
+    /**
+	 * Instantiates a new file system storage service.
+	 *
+	 * @param properties
+	 *            the properties
+	 */
     @Autowired
-    public FileSystemStorageService(StorageProperties properties) {
+    public StorageServiceFileSystem(StorageProperties properties) {
         this.rootLocation = Paths.get(properties.getLocation());
         this.directory = null;
     }
     
+    /* (non-Javadoc)
+     * @see com.upload.service.StorageService#init()
+     */
     @Override
     public void init() {
     	try {
@@ -34,12 +51,18 @@ public class FileSystemStorageService implements StorageService {
     		new File(rootLocation.toUri()).mkdir();
     		this.directory = new File(rootLocation.toUri());
     	} catch (IllegalArgumentException e) {
-    		throw new StorageException("Could not initialize storage", e);
+    		e.printStackTrace();
+    		throw new StorageException("Ocorreu um erro durante a inicialização do armazenamento.", e);
     	}
     }
 
+    
+    /* (non-Javadoc)
+     * @see com.upload.service.StorageService#store(org.springframework.web.multipart.MultipartFile,
+     *  com.upload.model.dto.UploadFileRequestDTO)
+     */
     @Override
-    public void store(MultipartFile file, UploadFileRequest uploadFileRequest) {
+    public void store(MultipartFile file, UploadFileRequestDTO uploadFileRequest) {
     	File assembledFile = null;
     	File uploadFileDir = null;
     	
@@ -53,13 +76,14 @@ public class FileSystemStorageService implements StorageService {
 	            assembledFile = new File(uploadFileDir, file.getOriginalFilename());
 	            //copia o arquivo para o disco
 	            FileCopyUtils.copy(file.getBytes(), assembledFile);
+	            uploadFileRequest.setFileAssembled(true);
 	            
 	        // caso contrário, o arquivo foi enviado em bloco
 	        } else {
 	            byte[] bytes = file.getBytes();
 	            // testa se tamanho do arquivo condiz com o tamanho esperado do bloco
 	            if (uploadFileRequest.getChunkFrom() + bytes.length != uploadFileRequest.getChunkTo() + 1)
-	                throw new StorageException("Unexpected length of chunk: " + bytes.length + 
+	                throw new StorageException("Tamanho inesperado de bloco de arquivo: " + bytes.length + 
 	                        " != " + (uploadFileRequest.getChunkTo() + 1) + " - " + uploadFileRequest.getChunkFrom());
 	            
 	            // salva o bloco de arquivo
@@ -72,12 +96,13 @@ public class FileSystemStorageService implements StorageService {
 	            // se o arquivo inteiro já foi salvo no disco
 	            if (lengthSoFar == uploadFileRequest.getFileFullLength()) {
 	            	// realiza o parse dos blocos de arquivo que se encontram no disco
-	                assembledFile = FileChunkUtils.assembleAndDeleteChunks(uploadFileDir, file.getOriginalFilename(), 
+	                FileChunkUtils.assembleAndDeleteChunks(uploadFileDir, file.getOriginalFilename(), 
 	                        new ArrayList<Long>(chunkStartsToLengths.keySet()));
+	                uploadFileRequest.setFileAssembled(true);
 	            }
 	        }    	         
         } catch (IOException e) {
-            throw new StorageException("Failed to store file " + file.getOriginalFilename(), e);
+            throw new StorageException("Ocorreu um erro ao armazenar o arquivo: " + file.getOriginalFilename(), e);
         }
     }
     

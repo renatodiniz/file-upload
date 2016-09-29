@@ -1,22 +1,21 @@
 package com.upload.controller;
 
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.upload.model.File;
@@ -28,10 +27,12 @@ import com.upload.service.StorageService;
 import com.upload.service.UserService;
 import com.upload.service.exception.StorageException;
 
+
 /**
  * The Class FileUploadController.
  */
-@Controller
+@RestController
+@RequestMapping("/arquivo")
 public class FileUploadController {
 	
 	/** Serviço de armazenamento de arquivos. */
@@ -78,7 +79,7 @@ public class FileUploadController {
 	 * @return the response entity
 	 * 			  Entidade de resposta com informações relevantes sobre o upload.
 	 */
-	@PostMapping("/arquivo")
+	@RequestMapping(method = RequestMethod.POST)
 	public ResponseEntity<Map<String, Object>> handleFileUpload(@RequestParam("file") MultipartFile multipartFile, 
 			@RequestParam("userId") Long userId,
 			@RequestParam("name") String name,
@@ -93,7 +94,7 @@ public class FileUploadController {
 			user = new User(userId, name);				
 		
 		if (file == null)
-			file = new File(fileId, user, Calendar.getInstance(), null, multipartFile.getOriginalFilename(), UploadStatus.EM_ANDAMENTO);
+			file = new File(fileId, user, Calendar.getInstance(), null, multipartFile.getOriginalFilename(), UploadStatus.PROCESSING);
 		
 		try {			
 			// cria objeto com dados do request e realiza armazenamento do arquivo
@@ -105,21 +106,21 @@ public class FileUploadController {
 			if (uploadFileRequest.isFileAssembled()) {
 				// criando messagem de retorno da requisição
 				String message = "Upload do arquivo %s realizado com sucesso: %s";
-				String dataHoraAtual = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss").format(new Date());
-				ret.put("message", String.format(message, multipartFile.getOriginalFilename(), dataHoraAtual));
+				String currentDateAndTime = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss").format(new Date());
+				ret.put("message", String.format(message, multipartFile.getOriginalFilename(), currentDateAndTime));
 				
 				
-				file.setUploadStatus(UploadStatus.CONCLUIDO);
+				file.setUploadStatus(UploadStatus.FINISHED);
 				file.setEndTime(Calendar.getInstance());
 			}
 			
 			// cria/atualiza usuário e arquivo
-			userService.saveUser(user);
+			userService.saveOrUpdateUser(user);
 			fileService.saveOrUpdateFile(file);
 			
 		} catch (StorageException e) {
 			// caso ocorra algum erro no processo, seta o status do arquivo como falha
-			file.setUploadStatus(UploadStatus.FALHA);
+			file.setUploadStatus(UploadStatus.FAIL);
 			fileService.saveOrUpdateFile(file);
 
 			logger.error("Erro durante o armazenamento do arquivo.", e);
@@ -130,9 +131,9 @@ public class FileUploadController {
 		return ResponseEntity.ok().body(ret);
 	}
 	
-	@GetMapping("/arquivo/arquivos")
-    public List<File> listUploadedFiles() {
-        return fileService.findAllFiles();
-    }
+	@RequestMapping("/arquivos")
+	Collection<File> readFiles() {
+		return fileService.findAllFiles();
+	}
 
 }

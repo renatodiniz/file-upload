@@ -55,7 +55,6 @@
 	            maxChunkSize: 1000000,
 	            maxNumberOfFiles: 1,
 	            done: function(e, data) {
-	            	alert(data.result.message);
 	            	if (data.result.message) {
 	                	$('<p/>').text(data.result.message).appendTo('#files');
 	            	}

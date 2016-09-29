@@ -2,7 +2,6 @@ package com.upload.service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicLong;
 
 import org.springframework.stereotype.Service;
 
@@ -13,9 +12,6 @@ import com.upload.model.User;
  */
 @Service("userService")
 public class UserServiceMemory implements UserService {
-
-	/** Auto Generate ID Number. */
-	private static final AtomicLong counter = new AtomicLong();
 
 	/** Lista que armazena os arquivos. */
 	private static List<User> userRecords;
@@ -36,13 +32,37 @@ public class UserServiceMemory implements UserService {
 		}
 		return null;
 	}
-
+	
 	/* (non-Javadoc)
-	 * @see com.upload.service.UserService#saveUser(com.upload.model.User)
+	 * @see com.upload.service.UserService#saveOrUpdateUser(com.upload.model.User)
 	 */
-	public void saveUser(User user) {
-		user.setId(counter.incrementAndGet());
+	public void saveOrUpdateUser(User user) {
+		// insere ou atualiza o arquivo na lista
+		if (userRecords == null || findById(user.getId()) != null)			
+			updateUser(user);
+		else
+			saveUser(user);
+	}
+
+	/**
+	 * Salva um usuario.
+	 *
+	 * @param user
+	 *            the user
+	 */
+	private void saveUser(User user) {
 		userRecords.add(user);
+	}
+	
+	/**
+	 * Atualiza um usuario.
+	 *
+	 * @param user
+	 *            the user
+	 */
+	private void updateUser(User user) {
+		int index = userRecords.indexOf(user);
+		userRecords.set(index, user);
 	}
 
 	/* (non-Javadoc)

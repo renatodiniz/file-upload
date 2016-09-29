@@ -15,14 +15,14 @@ public interface UserService {
 	 * @return the user
 	 */
 	User findById(Long id);
-
+	
 	/**
-	 * Salva um usuário.
+	 * Salva ou atuliza um usuário.
 	 *
 	 * @param user
 	 *            the user
 	 */
-	void saveUser(User user);
+	void saveOrUpdateUser(User user);
 
 	/**
 	 * Checa se um usuário já foi salvo.

@@ -6,13 +6,13 @@ package com.upload.model;
 public enum UploadStatus {
 	
 	/** Upload em andamento. */
-	EM_ANDAMENTO ("Em andamento."),
+	PROCESSING ("Em andamento."),
     
     /** Upload com falha. */
-    FALHA   	 ("Falha"),
+    FAILED   	 ("Falhou"),
     
     /** Upload concluído. */
-    CONCLUIDO    ("Concluído");
+    COMPLETED    ("Concluído");
 	
 	/** Descrição do status. */
 	private final String description;

@@ -110,7 +110,7 @@ public class FileUploadController {
 				ret.put("message", String.format(message, multipartFile.getOriginalFilename(), currentDateAndTime));
 				
 				
-				file.setUploadStatus(UploadStatus.FINISHED);
+				file.setUploadStatus(UploadStatus.COMPLETED);
 				file.setEndTime(Calendar.getInstance());
 			}
 			
@@ -120,7 +120,7 @@ public class FileUploadController {
 			
 		} catch (StorageException e) {
 			// caso ocorra algum erro no processo, seta o status do arquivo como falha
-			file.setUploadStatus(UploadStatus.FAIL);
+			file.setUploadStatus(UploadStatus.FAILED);
 			fileService.saveOrUpdateFile(file);
 
 			logger.error("Erro durante o armazenamento do arquivo.", e);

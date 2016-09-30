@@ -1,8 +1,12 @@
 package com.upload.model;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
 /**
  * The Class User.
  */
+@ApiModel(description = "Esse objeto representa um Usuário.")
 public class User {
 
 	/** The id. */
@@ -60,6 +64,7 @@ public class User {
 	 *
 	 * @return the id
 	 */
+	@ApiModelProperty(notes = "Id do Usuário.", required = true)
 	public Long getId() {
 		return id;
 	}
@@ -79,6 +84,7 @@ public class User {
 	 *
 	 * @return the name
 	 */
+	@ApiModelProperty(notes = "Nome do Usuário.", required = true)
 	public String getName() {
 		return name;
 	}

@@ -27,6 +27,12 @@ import com.upload.service.StorageService;
 import com.upload.service.UserService;
 import com.upload.service.exception.StorageException;
 
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
+
 
 /**
  * The Class FileUploadController.
@@ -34,25 +40,15 @@ import com.upload.service.exception.StorageException;
 @RestController
 @RequestMapping("/arquivo")
 public class FileUploadController {
-	
-	/** Serviço de armazenamento de arquivos. */
+
 	private final StorageService storageService;
-	
-	/** Serviço de persistência de arquivo. */
+
 	private final FileService fileService;
-	
-	/** Serviço de persistência de usuário. */
+
 	private final UserService userService;
-	
-	/** Log4j logger. */
+
 	private static final Logger logger = Logger.getLogger(FileUploadController.class);
 	
-	/**
-	 * Instantiates a new file upload controller.
-	 *
-	 * @param storageService
-	 *            the storage service
-	 */
 	@Autowired
     public FileUploadController(StorageService storageService, FileService fileService, UserService userService) {
         this.storageService = storageService;
@@ -60,25 +56,18 @@ public class FileUploadController {
         this.userService = userService;
     }
 
-	/**
-	 * Método responsável por realizar o upload de um arquivo.
-	 * Capaz de suportar upload de arquivos grandes enviados em blocos.
-	 * Faz uso do Content-Range header que é transmitido pelo plugin jQuery-File-Upload 
-	 * para cada bloco de arquivo.
-	 *
-	 * @param multipartFile
-	 *            arquivo multipart
-	 * @param userId
-	 *            id do usuário
-	 * @param name
-	 *            nome do usuário
-	 * @param fileId
-	 *            id único do arquivo
-	 * @param contentRange
-	 *            Content-Range header
-	 * @return the response entity
-	 * 			  Entidade de resposta com informações relevantes sobre o upload.
-	 */
+	@ApiOperation(value = "postArquivo", 
+			notes = "Método responsável por realizar o upload de um arquivo. "
+				+ "Suporta arquivos grandes, enviados em bloco. \n "
+				+ "Acho que não é possível simular o envio do arquivo em bloco utilizando o Swagger "
+				+ "da mesma maneira que o JQuery File Upload Plugin faz, "
+				+ "entretanto caso seja enviado arquivo até 1Mb, ele é capaz de realizar o teste.")
+	@ApiImplicitParams({
+			@ApiImplicitParam(name = "file", value = "Arquivo multipart enviado.", paramType = "form", dataType = "file", required = true),
+			@ApiImplicitParam(name = "userId", value = "Id do Usuário.", paramType = "query", dataType = "long", required = true),
+			@ApiImplicitParam(name = "name", value = "Nome do Usuário.", paramType = "query", dataType = "string", required = true),
+			@ApiImplicitParam(name = "fileId", value = "Id do Arquivo.", paramType = "query", dataType = "long", required = true),
+			@ApiImplicitParam(name = "Content-Range", value = "Content-Range. Enviado no Header do Request caso o arquivo seja enviado em bloco", paramType = "header", dataType = "string") })
 	@RequestMapping(method = RequestMethod.POST)
 	public ResponseEntity<Map<String, Object>> handleFileUpload(@RequestParam("file") MultipartFile multipartFile, 
 			@RequestParam("userId") Long userId,
@@ -131,7 +120,8 @@ public class FileUploadController {
 		return ResponseEntity.ok().body(ret);
 	}
 	
-	@RequestMapping("/arquivos")
+	@ApiOperation(value = "getArquivos", notes = "Retorna a listagem de todos os arquivos que foram enviados.")
+	@RequestMapping(value = "/arquivos", method = RequestMethod.POST)
 	Collection<File> readFiles() {
 		return fileService.findAllFiles();
 	}

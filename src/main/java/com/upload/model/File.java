@@ -1,11 +1,14 @@
 package com.upload.model;
 
 import java.util.Calendar;
-import java.util.concurrent.atomic.AtomicLong;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
 /**
  * The Class File.
  */
+@ApiModel(description = "Esse objeto representa um Arquivo.")
 public class File {
 
 	/** The id. */
@@ -97,6 +100,7 @@ public class File {
 	 *
 	 * @return the id
 	 */
+	@ApiModelProperty(notes = "Id do Arquivo.", required = true)
 	public Long getId() {
 		return id;
 	}
@@ -116,6 +120,7 @@ public class File {
 	 *
 	 * @return the user
 	 */
+	@ApiModelProperty(notes = "Usuário que enviou o arquivo.", required = true)
 	public User getUser() {
 		return user;
 	}
@@ -135,6 +140,7 @@ public class File {
 	 *
 	 * @return the start time
 	 */
+	@ApiModelProperty(notes = "Hora de início do upload.", required = true)
 	public Calendar getStartTime() {
 		return startTime;
 	}
@@ -154,6 +160,7 @@ public class File {
 	 *
 	 * @return the end time
 	 */
+	@ApiModelProperty(notes = "Hora de término do upload.", required = true)
 	public Calendar getEndTime() {
 		return endTime;
 	}
@@ -173,6 +180,7 @@ public class File {
 	 *
 	 * @return the name
 	 */
+	@ApiModelProperty(notes = "Nome do Arquivo.", required = true)
 	public String getName() {
 		return name;
 	}
@@ -192,6 +200,7 @@ public class File {
 	 *
 	 * @return the upload status
 	 */
+	@ApiModelProperty(notes = "Status do upload.", required = true)
 	public UploadStatus getUploadStatus() {
 		return uploadStatus;
 	}
@@ -211,6 +220,7 @@ public class File {
 	 *
 	 * @return the number of chunks
 	 */
+	@ApiModelProperty(notes = "Quantidade de blocos em que o arquivo foi dividido.", required = true)
 	public Long getNumberOfChunks() {
 		return numberOfChunks;
 	}

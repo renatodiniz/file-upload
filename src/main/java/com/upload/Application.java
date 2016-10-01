@@ -14,7 +14,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.security.oauth2.client.EnableOAuth2Sso;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.oauth2.client.OAuth2ClientContext;
@@ -23,7 +22,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.google.common.base.Predicate;
-import com.upload.controller.FileUploadController;
 import com.upload.service.StorageService;
 import com.upload.service.properties.StorageProperties;
 
@@ -37,8 +35,8 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
  * The Class Application.
  */
 @SpringBootApplication
-@EnableOAuth2Sso
 @RestController
+@EnableOAuth2Sso
 @EnableConfigurationProperties(StorageProperties.class)
 @EnableSwagger2
 public class Application extends WebSecurityConfigurerAdapter {
@@ -49,9 +47,6 @@ public class Application extends WebSecurityConfigurerAdapter {
 	
 	/**
 	 * Esse método retorna as informações de autenticação recebidas pelo oauth2.
-	 *
-	 * @param principal
-	 *            the principal
 	 * @return the map (nome do Facebook e id do Facebook)
 	 */
 	@SuppressWarnings("unchecked")
@@ -68,9 +63,6 @@ public class Application extends WebSecurityConfigurerAdapter {
 
 	/**
 	 * Método main que iniciará a aplicação SpringBoot.
-	 *
-	 * @param args
-	 *            the arguments
 	 */
 	public static void main(String[] args) {
 		SpringApplication.run(Application.class, args);
@@ -80,9 +72,6 @@ public class Application extends WebSecurityConfigurerAdapter {
 	 * Esse método configura a autenticação da aplicação.
 	 * Define as URLs que serão acessíveis sem precisar estar autenticado.
 	 * Define para onde será redirecionada a aplicação após o logout.
-	 *
-	 * @param http
-	 *            the http
 	 */
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
@@ -105,11 +94,12 @@ public class Application extends WebSecurityConfigurerAdapter {
                 .groupName("full-arquivo-api")
                 .apiInfo(apiInfo())
                 .select()
-                .paths(petstorePaths())
-                .build();
+                .paths(getPaths())
+                .build()
+                .useDefaultResponseMessages(true);
     }
 	
-	private Predicate<String> petstorePaths() {
+	private Predicate<String> getPaths() {
         return or(
                 regex("/arquivo"),
                 regex("/arquivo/arquivos")
@@ -118,7 +108,8 @@ public class Application extends WebSecurityConfigurerAdapter {
 	
 	private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
-                .title("Springfox File Upload API")
+                .title("Swagger API Docs")
+                .description("Documentação da API da aplicação File Upload.")
                 .build();
     }
 	

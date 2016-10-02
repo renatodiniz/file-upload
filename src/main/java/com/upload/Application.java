@@ -1,8 +1,5 @@
 package com.upload;
 
-import static com.google.common.base.Predicates.or;
-import static springfox.documentation.builders.PathSelectors.regex;
-
 import java.security.Principal;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -21,7 +18,6 @@ import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.google.common.base.Predicate;
 import com.upload.service.StorageService;
 import com.upload.service.properties.StorageProperties;
 
@@ -73,7 +69,7 @@ public class Application extends WebSecurityConfigurerAdapter {
 	protected void configure(HttpSecurity http) throws Exception {
 		http.antMatcher("/**")
 				.authorizeRequests()
-			.antMatchers("/", "/login**", "/webjars/**", "/arquivo/**")
+			.antMatchers("/", "/login**", "/webjars/**", "/arquivo/**", "/js/**")
 				.permitAll()
 			.anyRequest()
 				.authenticated()

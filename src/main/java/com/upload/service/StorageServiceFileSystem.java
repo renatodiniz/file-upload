@@ -89,9 +89,7 @@ public class StorageServiceFileSystem implements StorageService {
         } catch (IOException e) {
             throw new StorageException("Ocorreu um erro ao armazenar o arquivo: " + file.getOriginalFilename(), e);
         }
-    }
-    
-    
+    }    
     
     @Override
     public InputStreamResource download(FileModel fileModel) throws StorageException {
@@ -101,14 +99,13 @@ public class StorageServiceFileSystem implements StorageService {
     	
 		try {
 			uploadFileDir = new File(directory, fileModel.getId().toString());
-			file = new File(uploadFileDir, fileModel.getName());
+			file = new File(uploadFileDir, fileModel.getName());			
 			isr = new InputStreamResource(new FileInputStream(file));
 		} catch (FileNotFoundException e) {
 			throw new StorageException("Ocorreu um erro ao recuperar o arquivo: " + fileModel.getName(), e);
 		}
 	    
 	    return isr;
-    }
-    
+    }    
     
 }

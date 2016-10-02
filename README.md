@@ -1,31 +1,30 @@
-##Aplicação para upload de arquivos.
-
+### Processo seletivo Hotmart - Desenvolvedor
 Você deve criar uma aplicação web que realize upload de arquivos e liste todos os arquivos enviados utilizando a linguagem de programação Java. O site deve consumir APIs REST para realizar todo o trabalho.
 
-###Pontos importantes:
-A aplicação deve ser feita em Java
-Toda a API deve estar documentada utilizando o Swagger
-O código fonte deve estar hospedado no Github ou ser enviado por e-mail
 
-###API de upload
-Os arquivos devem ser enviados em blocos (“chunks”). 
-Cada bloco deve ter no máximo 1MB.
-Além do conteúdo do arquivo a API deve receber um identificador do usuário.
+### Tecnologias utilizadas nesse projeto
 
-###API de listagem
-A API deve retornar uma listagem de arquivos.
-Campos retornados: 
-- Identificador do usuário que enviou o arquivo
-- Nome do arquivo
-- Status do upload (Em andamento, falha ou concluído)
-- Tempo de envio
-- Quantidade de blocos em que o arquivo foi dividido
-- Link para download do arquivo
+Backend
+* Spring Boot 1.4
+* Spring MVC 4 RESTFul Web Services
+* OAuth 2.0 Authorization Framework
+* Apache Commons FileUpload 1.3.2
+* Apache Log4j 2
+* Swagger 2.5
+* Maven
 
-###Observações:
-- Não é necessário utilizar banco de dados, para critério de avaliação do teste, tudo pode ser processado em memória ou em disco local, conforme sua preferência. - Caso seja necessário utilizar banco de dados, utilize MySQL e envie junto um dump de estrutura e as configurações de conexão necessárias.
-- Podem ser usadas bibliotecas de Javascript à sua escolha.
-- Podem ser usadas bibliotecas Java externas para auxílio da tarefa de criação da API, da documentação e do parse dos chunks dos arquivos.
-- Não é necessário se preocupar com estética nas páginas solicitadas.
-- Importante realizar corretamente tratamentos de erros.
-- Podem ser utilizados frameworks para criar aplicação standalone para expor a API, ou também podem ser utilizados servidores de aplicação externos. Nesse caso você deverá informar a exata versão do servidor utilizado e todas as configurações necessárias para rodar a aplicação.
+Frontend
+* AngularJS 1.4
+* JQuery File Upload (https://blueimp.github.io/jQuery-File-Upload/)
+* Bootstrap
+
+Desenvolvido no Eclipse Mars.1 Release (4.5.1)
+
+### Pontos importantes:
+
+Os arquivos são enviados para o diretório `upload-dir` na raiz do projeto.
+
+Para rodar a aplicação:
+`$ mvn spring-boot:run`
+
+Para acessar a aplicação: `localhost:8080/`

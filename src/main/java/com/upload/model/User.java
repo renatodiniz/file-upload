@@ -3,34 +3,20 @@ package com.upload.model;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
-/**
- * The Class User.
- */
-@ApiModel(description = "Esse objeto representa um Usuário.")
+@ApiModel("User ")
 public class User {
 
-	/** The id. */
+	@ApiModelProperty(value = "Id do usuario", required = true)
 	private Long id;
 	
-	/** The name. */
+	@ApiModelProperty(value = "Nome do usuario", required = true)
 	private String name;
 
-	/**
-	 * Instantiates a new user.
-	 *
-	 * @param userId
-	 *            the user id
-	 * @param name
-	 *            the name
-	 */
 	public User(Long userId, String name) {
 		this.id = userId;
 		this.name = name;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -39,9 +25,6 @@ public class User {
 		return result;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -59,42 +42,18 @@ public class User {
 		return true;
 	}
 
-	/**
-	 * Gets the id.
-	 *
-	 * @return the id
-	 */
-	@ApiModelProperty(notes = "Id do Usuário.", required = true)
 	public Long getId() {
 		return id;
 	}
 
-	/**
-	 * Sets the id.
-	 *
-	 * @param id
-	 *            the new id
-	 */
 	public void setId(Long id) {
 		this.id = id;
 	}
 
-	/**
-	 * Gets the name.
-	 *
-	 * @return the name
-	 */
-	@ApiModelProperty(notes = "Nome do Usuário.", required = true)
 	public String getName() {
 		return name;
 	}
 
-	/**
-	 * Sets the name.
-	 *
-	 * @param name
-	 *            the new name
-	 */
 	public void setName(String name) {
 		this.name = name;
 	}

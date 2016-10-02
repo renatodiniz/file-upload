@@ -41,7 +41,7 @@
         </div>
     </nav>
 
-    <div class="container containerFileUpload" ng-show="home.authenticated">
+    <div class="container" ng-show="home.authenticated">
         <div class="page-header">
             <h2>Enviar Arquivo</h2>
         </div>
@@ -56,7 +56,6 @@
             <div class="progress-bar progress-bar-success"></div>
         </div>
         <div id="message" class="message"><p id="pMessage"></p></div>
-        <br/>
     </div>
 
     <div class="container" ng-show="home.files.length">
@@ -65,8 +64,8 @@
         </div>
 
         <div class="row header green" >
-            <div class="cell">Id do Usuario</div>
-            <div class="cell">Nome do Usuario</div>
+            <div class="cell">Id Usuario</div>
+            <div class="cell">Usuario</div>
             <div class="cell">Nome do Arquivo</div>
             <div class="cell">Status</div>
             <div class="cell">Tempo de Envio</div>
@@ -78,8 +77,8 @@
             <div class="cell">{{file.user.id}}</div>
             <div class="cell">{{file.user.name}}</div>
             <div class="cell">{{file.name}}</div>
-            <div class="cell">{{file.uploadStatus}}</div>
-            <div class="cell">00:01:35</div>
+            <div class="cell">{{file.uploadStatusFormatted}}</div>
+            <div class="cell">{{file.timeFormatted}}</div>
             <div class="cell">{{file.numberOfChunks}}</div>
             <div class="cell">
                 <a href="/download"><span class="glyphicon glyphicon-download" />
@@ -91,7 +90,7 @@
     <footer class="footer">
         <div class="container">
         	<br/>
-            <a href="/swagger-ui.html" target="_blank">Swagger API Docs</a>
+            <a href="/swagger-ui.html" target="_blank" ng-show="home.authenticated">Swagger API Docs</a>
         </div>
     </footer>
     

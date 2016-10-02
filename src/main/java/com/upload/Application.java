@@ -31,9 +31,6 @@ import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
-/**
- * The Class Application.
- */
 @SpringBootApplication
 @RestController
 @EnableOAuth2Sso
@@ -47,7 +44,6 @@ public class Application extends WebSecurityConfigurerAdapter {
 	
 	/**
 	 * Esse método retorna as informações de autenticação recebidas pelo oauth2.
-	 * @return the map (nome do Facebook e id do Facebook)
 	 */
 	@SuppressWarnings("unchecked")
 	@RequestMapping("/user")
@@ -77,7 +73,7 @@ public class Application extends WebSecurityConfigurerAdapter {
 	protected void configure(HttpSecurity http) throws Exception {
 		http.antMatcher("/**")
 				.authorizeRequests()
-			.antMatchers("/", "/login**", "/webjars/**")
+			.antMatchers("/", "/login**", "/webjars/**", "/arquivo/**")
 				.permitAll()
 			.anyRequest()
 				.authenticated()
@@ -115,10 +111,6 @@ public class Application extends WebSecurityConfigurerAdapter {
 	
 	/**
 	 * Esse método invoca a inicialização do serviço de armazenamento de arquivos.
-	 *
-	 * @param storageService
-	 *            the storage service
-	 * @return the command line runner
 	 */
 	@Bean
 	CommandLineRunner init(StorageService storageService) {

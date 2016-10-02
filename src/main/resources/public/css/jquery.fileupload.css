@@ -60,10 +60,10 @@ body {
 -------------------------------------------------- */
 /* Not required for template or sticky footer method. */
 
-body > .containerFileUpload {
-  padding: 60px 15px 0;
+body > .container {
+  padding: 40px 15px 0;
 }
-.containerFileUpload .text-muted {
+.container .text-muted {
   margin: 20px 0;
 }
 

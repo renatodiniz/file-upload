@@ -1,5 +1,9 @@
 package com.upload.model;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -18,11 +22,17 @@ public class File {
 	@ApiModelProperty(value = "Termino do upload em milisegundos")
 	private Long endTime;
 	
+	@ApiModelProperty(value = "Tempo de duracao do upload formatado mm:ss:SSS")
+	private String timeFormatted;
+	
 	@ApiModelProperty(value = "Nome do arquivo", required = true)
 	private String name;
 	
 	@ApiModelProperty(value = "Status do upload", required = true)
 	private UploadStatus uploadStatus;
+	
+	@ApiModelProperty(value = "Status do upload formatado", required = true)
+	private String uploadStatusFormatted;
 	
 	@ApiModelProperty(value = "Numero de blocos do arquivo", required = true)
 	private Long numberOfChunks;
@@ -61,6 +71,32 @@ public class File {
 		} else if (!id.equals(other.id))
 			return false;
 		return true;
+	}
+	
+	public String getTimeFormatted() {
+		if (startTime != null && endTime != null) {
+			Date date = new Date(endTime - startTime);
+			DateFormat formatter = new SimpleDateFormat("mm:ss:SSS");
+			timeFormatted = formatter.format(date);
+		}
+		return timeFormatted;
+	}
+	
+	public String getUploadStatusFormatted() {
+		switch (uploadStatus) {
+			case PROCESSING:
+				uploadStatusFormatted = "Em andamento";
+				break;
+			case FAILED:
+				uploadStatusFormatted = "Falha";
+				break;
+			case COMPLETED:
+				uploadStatusFormatted = "Concluído";
+				break;
+			default:
+				break;
+		}
+		return uploadStatusFormatted;
 	}
 	
 	public void incrementNumberOfChunks() {

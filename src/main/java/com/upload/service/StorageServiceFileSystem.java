@@ -17,33 +17,19 @@ import com.upload.model.dto.UploadFileRequestDTO;
 import com.upload.service.exception.StorageException;
 import com.upload.service.properties.StorageProperties;
 
-/**
- * The Class FileSystemStorageService.
- */
 @Service
 public class StorageServiceFileSystem implements StorageService {
 
-    /** The root location. */
-    private final Path rootLocation;
-    
-    /** The directory. */
+
+    private final Path rootLocation;    
     private File directory;
 
-    /**
-	 * Instantiates a new file system storage service.
-	 *
-	 * @param properties
-	 *            the properties
-	 */
     @Autowired
     public StorageServiceFileSystem(StorageProperties properties) {
         this.rootLocation = Paths.get(properties.getLocation());
         this.directory = null;
     }
     
-    /* (non-Javadoc)
-     * @see com.upload.service.StorageService#init()
-     */
     @Override
     public void init() {
     	try {
@@ -56,11 +42,6 @@ public class StorageServiceFileSystem implements StorageService {
     	}
     }
 
-    
-    /* (non-Javadoc)
-     * @see com.upload.service.StorageService#store(org.springframework.web.multipart.MultipartFile,
-     *  com.upload.model.dto.UploadFileRequestDTO)
-     */
     @Override
     public void store(MultipartFile file, UploadFileRequestDTO uploadFileRequest) {
     	File assembledFile = null;

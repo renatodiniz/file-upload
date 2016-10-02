@@ -12,24 +12,12 @@ import java.util.TreeMap;
 import org.springframework.util.FileCopyUtils;
 
 /**
- * The Class FileChunkUtils.
  * Classe utilitária para lidar com blocos de arquivos.
  */
 public class FileChunkUtils {
 	
 	/**
 	 * Salva um bloco de arquivo em disco.
-	 *
-	 * @param dir
-	 *            diretório para salvar arquivo
-	 * @param fileName
-	 *            nome do arquivo
-	 * @param chunkFrom
-	 *            the chunk from
-	 * @param bytes
-	 *            bytes do bloco de arquivo
-	 * @throws IOException
-	 *             Signals that an I/O exception has occurred.
 	 */
 	public static void saveChunk(File dir, String fileName, long chunkFrom, byte[] bytes) throws IOException {
 	    File target = new File(dir, fileName + "." + chunkFrom + ".chunk");
@@ -39,14 +27,6 @@ public class FileChunkUtils {
 	/**
 	 * Retorna um map com as posições iniciais dos 
 	 * blocos de arquivo e tamanho dos blocos no diretorio.
-	 *
-	 * @param dir
-	 *            diretório dos blocos de arquivo
-	 * @param fileName
-	 *            nome do arquivo
-	 * @return map de posições iniciais e tamanho dos blocos
-	 * @throws IOException
-	 *             Signals that an I/O exception has occurred.
 	 */
 	public static TreeMap<Long, Long> getChunkStartsToLengths(File dir, 
 	        String fileName) throws IOException {
@@ -65,10 +45,6 @@ public class FileChunkUtils {
 	/**
 	 * Retorna a quantidade de bytes do arquivo que já foi salvo 
 	 * no disco juntando todos os blocos de arquivo.
-	 *
-	 * @param chunkStartsToLengths
-	 *            map de posições iniciais e tamanho dos blocos
-	 * @return quantidade de bytes do arquivo
 	 */
 	public static long getCommonLength(TreeMap<Long, Long> chunkStartsToLengths) {
 	    long ret = 0;
@@ -79,15 +55,6 @@ public class FileChunkUtils {
 	
 	/**
 	 * Realiza o parse dos blocos de arquivo.
-	 *
-	 * @param dir
-	 *            diretório dos blocos de arquivo
-	 * @param fileName
-	 *            nome do arquivo
-	 * @param chunkStarts
-	 *            lista das posições de início de cada bloco
-	 * @throws IOException
-	 *             Signals that an I/O exception has occurred.
 	 */
 	public static void assembleAndDeleteChunks(File dir, String fileName, List<Long> chunkStarts) throws IOException {
 	    File assembledFile = new File(dir, fileName);

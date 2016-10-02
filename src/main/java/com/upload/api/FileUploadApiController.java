@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.upload.model.File;
+import com.upload.model.FileModel;
 import com.upload.model.UploadStatus;
 import com.upload.model.User;
 import com.upload.model.dto.UploadFileRequestDTO;
@@ -35,7 +35,7 @@ public class FileUploadApiController implements FileUploadApi {
         this.userService = userService;
     }
 
-	public ResponseEntity<File> fileUploadPost(
+	public ResponseEntity<FileModel> fileUploadPost(
 			@RequestParam("file") MultipartFile multipartFile, 
 			@RequestParam("userId") Long userId,
 			@RequestParam("name") String name,
@@ -43,13 +43,13 @@ public class FileUploadApiController implements FileUploadApi {
 			@RequestHeader(required = false, value = "Content-Range") String contentRange) {
 		
 		User user = userService.findById(userId);
-		File file = fileService.findById(fileId);
+		FileModel file = fileService.findById(fileId);
 				
 		if (user == null)
 			user = new User(userId, name);				
 		
 		if (file == null)
-			file = new File(fileId, user, Calendar.getInstance().getTimeInMillis(), null, multipartFile.getOriginalFilename(), UploadStatus.PROCESSING);
+			file = new FileModel(fileId, user, Calendar.getInstance().getTimeInMillis(), null, multipartFile.getOriginalFilename(), UploadStatus.PROCESSING);
 		
 		try {			
 			// cria DTO com dados do request e realiza armazenamento do arquivo
@@ -58,9 +58,10 @@ public class FileUploadApiController implements FileUploadApi {
 			file.incrementNumberOfChunks();
 			
 			// testa se o upload do arquivo foi finalizado
-			if (uploadFileRequest.isFileAssembled()) {				
+			if (uploadFileRequest.isFileAssembled()) {
 				file.setUploadStatus(UploadStatus.COMPLETED);
 				file.setEndTime(Calendar.getInstance().getTimeInMillis());
+				file.setLength(uploadFileRequest.getFileFullLength());
 			}
 			
 			// cria/atualiza usuário e arquivo
@@ -73,8 +74,8 @@ public class FileUploadApiController implements FileUploadApi {
 			fileService.saveOrUpdateFile(file);
 			logger.error("Erro durante o armazenamento do arquivo.", e);
 			
-			return new ResponseEntity<File>(HttpStatus.INTERNAL_SERVER_ERROR);			
+			return new ResponseEntity<FileModel>(HttpStatus.INTERNAL_SERVER_ERROR);			
 		}
-		return new ResponseEntity<File>(file, HttpStatus.OK);
+		return new ResponseEntity<FileModel>(file, HttpStatus.OK);
 	}
 }

@@ -1,6 +1,8 @@
 package com.upload.service;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -8,11 +10,13 @@ import java.util.ArrayList;
 import java.util.TreeMap;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.upload.common.FileChunkUtils;
+import com.upload.model.FileModel;
 import com.upload.model.dto.UploadFileRequestDTO;
 import com.upload.service.exception.StorageException;
 import com.upload.service.properties.StorageProperties;
@@ -43,7 +47,7 @@ public class StorageServiceFileSystem implements StorageService {
     }
 
     @Override
-    public void store(MultipartFile file, UploadFileRequestDTO uploadFileRequest) {
+    public void store(MultipartFile file, UploadFileRequestDTO uploadFileRequest) throws StorageException {
     	File assembledFile = null;
     	File uploadFileDir = null;
     	
@@ -85,6 +89,25 @@ public class StorageServiceFileSystem implements StorageService {
         } catch (IOException e) {
             throw new StorageException("Ocorreu um erro ao armazenar o arquivo: " + file.getOriginalFilename(), e);
         }
+    }
+    
+    
+    
+    @Override
+    public InputStreamResource download(FileModel fileModel) throws StorageException {
+    	InputStreamResource isr;
+    	File uploadFileDir = null;
+    	File file = null;
+    	
+		try {
+			uploadFileDir = new File(directory, fileModel.getId().toString());
+			file = new File(uploadFileDir, fileModel.getName());
+			isr = new InputStreamResource(new FileInputStream(file));
+		} catch (FileNotFoundException e) {
+			throw new StorageException("Ocorreu um erro ao recuperar o arquivo: " + fileModel.getName(), e);
+		}
+	    
+	    return isr;
     }
     
     

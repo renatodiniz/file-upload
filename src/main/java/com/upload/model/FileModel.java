@@ -8,7 +8,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 @ApiModel("File ")
-public class File {
+public class FileModel {
 
 	@ApiModelProperty(value = "Id do arquivo", required = true)
 	private Long id;
@@ -36,8 +36,11 @@ public class File {
 	
 	@ApiModelProperty(value = "Numero de blocos do arquivo", required = true)
 	private Long numberOfChunks;
+	
+	@ApiModelProperty(value = "Tamanho do arquivo em bytes", required = true)
+	private Long length;
 
-	public File(Long fileId, User user, Long startTime, Long endTime, String name, UploadStatus uploadStatus) {
+	public FileModel(Long fileId, User user, Long startTime, Long endTime, String name, UploadStatus uploadStatus) {
 		super();
 		this.id = fileId;
 		this.user = user;
@@ -64,7 +67,7 @@ public class File {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		File other = (File) obj;
+		FileModel other = (FileModel) obj;
 		if (id == null) {
 			if (other.id != null)
 				return false;
@@ -76,7 +79,7 @@ public class File {
 	public String getTimeFormatted() {
 		if (startTime != null && endTime != null) {
 			Date date = new Date(endTime - startTime);
-			DateFormat formatter = new SimpleDateFormat("mm:ss:SSS");
+			DateFormat formatter = new SimpleDateFormat("mm:ss.SSS");
 			timeFormatted = formatter.format(date);
 		}
 		return timeFormatted;
@@ -157,6 +160,14 @@ public class File {
 
 	public void setNumberOfChunks(Long numberOfChunks) {
 		this.numberOfChunks = numberOfChunks;
-	}	
+	}
+
+	public Long getLength() {
+		return length;
+	}
+
+	public void setLength(Long length) {
+		this.length = length;
+	}
 
 }

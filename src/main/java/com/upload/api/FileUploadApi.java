@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.upload.model.File;
+import com.upload.model.FileModel;
 
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -16,12 +16,12 @@ import io.swagger.annotations.ApiResponses;
 
 public interface FileUploadApi {
 
-	@ApiOperation(value = "Realiza upload de arquivo. Suporta arquivo enviado em blocos.", response = File.class, tags = { "FileUploadApi", })
+	@ApiOperation(value = "Realiza upload de arquivo. Suporta arquivo enviado em blocos.", response = FileModel.class, tags = { "FileUploadApi", })
 	@ApiResponses(value = {
-			@ApiResponse(code = 200, message = "Upload realizado com sucesso.", response = File.class),
-			@ApiResponse(code = 500, message = "Erro inesperado.", response = File.class) })
+			@ApiResponse(code = 200, message = "Upload realizado com sucesso.", response = FileModel.class),
+			@ApiResponse(code = 500, message = "Erro inesperado.", response = FileModel.class) })
 	@RequestMapping(value = "/arquivo", method = RequestMethod.POST)
-	public ResponseEntity<File> fileUploadPost(
+	public ResponseEntity<FileModel> fileUploadPost(
 			
 		@ApiParam(value = "Arquivo multipart enviado.") @RequestParam("file") MultipartFile multipartFile, 
 		@ApiParam(value = "Id do Usuário.") @RequestParam("userId") Long userId,

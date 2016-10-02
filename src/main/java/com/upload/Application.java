@@ -90,16 +90,8 @@ public class Application extends WebSecurityConfigurerAdapter {
                 .groupName("full-arquivo-api")
                 .apiInfo(apiInfo())
                 .select()
-                .paths(getPaths())
                 .build()
                 .useDefaultResponseMessages(true);
-    }
-	
-	private Predicate<String> getPaths() {
-        return or(
-                regex("/arquivo"),
-                regex("/arquivo/arquivos")
-        );
     }
 	
 	private ApiInfo apiInfo() {

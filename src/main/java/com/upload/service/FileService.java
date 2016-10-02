@@ -2,16 +2,16 @@ package com.upload.service;
 
 import java.util.List;
 
-import com.upload.model.File;
+import com.upload.model.FileModel;
 
 public interface FileService {
 	
 
-	File findById(Long id);
+	FileModel findById(Long id);
 
-	void saveOrUpdateFile(File file);
+	void saveOrUpdateFile(FileModel file);
 
-	List<File> findAllFiles();
+	List<FileModel> findAllFiles();
 
-	public boolean isFileExist(File file);
+	public boolean isFileExist(FileModel file);
 }

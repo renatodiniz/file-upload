@@ -55,6 +55,7 @@
         <div id="progress" class="progress">
             <div class="progress-bar progress-bar-success"></div>
         </div>
+        
         <div id="message" class="message"><p id="pMessage"></p></div>
     </div>
 
@@ -81,7 +82,8 @@
             <div class="cell">{{file.timeFormatted}}</div>
             <div class="cell">{{file.numberOfChunks}}</div>
             <div class="cell">
-                <a href="/download"><span class="glyphicon glyphicon-download" />
+                <a href="/arquivo/{{file.id}}" ng-show="file.uploadStatus == 'COMPLETED'">
+                	<span class="glyphicon glyphicon-download" />
                 </a>
             </div>
         </div>

@@ -10,6 +10,7 @@ $(function() {
                 var progress = parseInt(data.loaded / data.total * 100, 10);
                 $('#progress .progress-bar').css('width',
                     progress + '%');
+                $('#refreshFiles').click();
             }
         })
         .bind(
@@ -34,6 +35,7 @@ $(function() {
             'fileuploadfail',
             function(e, data) {
             	$('#pMessage')
-                    .text('Ocorreu um erro inesperado ao enviar o arquivo.');                    
+                    .text('Ocorreu um erro inesperado ao enviar o arquivo.');
+            	$('#refreshFiles').click();
             });
 });

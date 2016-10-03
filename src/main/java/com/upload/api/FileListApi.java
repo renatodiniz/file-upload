@@ -16,7 +16,8 @@ public interface FileListApi {
 
 	@ApiOperation(value = "Lista os arquivos enviados.", response = FileModel.class, responseContainer = "List", tags = { "FileListApi", })
 	@ApiResponses(value = {
-			@ApiResponse(code = 200, message = "Upload realizado com sucesso.", response = FileModel.class, responseContainer = "List") })
+			@ApiResponse(code = 200, message = "Lista de arquivos retornada com sucesso.", response = FileModel.class, responseContainer = "List"),
+			@ApiResponse(code = 204, message = "Lista de arquivos vazia.", response = FileModel.class, responseContainer = "List")})
 	@RequestMapping(value = "/arquivo/arquivos", method = RequestMethod.GET)
 	public ResponseEntity<List<FileModel>> fileUploadPost( );
 

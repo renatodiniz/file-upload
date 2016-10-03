@@ -21,6 +21,12 @@ public class FileListApiController implements FileListApi {
     }
 
 	public ResponseEntity<List<FileModel>> fileUploadPost( ) {		
+		List<FileModel> listFiles = fileService.findAllFiles();
+		
+		if (listFiles.isEmpty()) {
+			return new ResponseEntity<List<FileModel>>(HttpStatus.NO_CONTENT);
+		}
+		
 		return new ResponseEntity<List<FileModel>>(fileService.findAllFiles(), HttpStatus.OK);
 	}
 }

@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.upload.model.FileModel;
 import com.upload.service.FileService;
 import com.upload.service.StorageService;
+import com.upload.service.exception.FileNotFoundException;
 import com.upload.service.exception.StorageException;
 
 @RestController
@@ -32,10 +33,14 @@ public class FileDownloadApiController implements FileDownloadApi {
 	
 	@RequestMapping(value = "/arquivo/{arquivoId}", method = RequestMethod.GET)
 	public ResponseEntity<InputStreamResource> fileDownloadGet(
-			@PathVariable Long arquivoId) {
+			@PathVariable Long arquivoId) throws FileNotFoundException{
 		
 		FileModel fileDownload = fileService.findById(arquivoId);
-
+		
+		if (fileDownload == null) {
+			throw new FileNotFoundException();
+		}			
+		
 	    HttpHeaders respHeaders = new HttpHeaders();
 	    respHeaders.setContentType(MediaType.APPLICATION_OCTET_STREAM);
 	    respHeaders.setContentLength(fileDownload.getLength());

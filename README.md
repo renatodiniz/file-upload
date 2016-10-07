@@ -8,7 +8,6 @@ Backend
 * Spring Boot 1.4
 * Spring MVC 4 RESTFul Web Services
 * OAuth 2.0 Authorization Framework
-* Apache Commons FileUpload 1.3.2
 * Apache Log4j 2
 * Swagger 2.5
 * Maven

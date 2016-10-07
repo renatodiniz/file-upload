@@ -26,4 +26,8 @@ Os arquivos são enviados para o diretório `upload-dir` na raiz do projeto.
 Para rodar a aplicação:
 `$ mvn spring-boot:run`
 
+Utilizar o mvn 3.3.X em diante.
+
 Para acessar a aplicação: `localhost:8080/`
+
+
